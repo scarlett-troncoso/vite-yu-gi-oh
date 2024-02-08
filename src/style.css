@@ -16,18 +16,47 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-.card {
-  padding: 2em;
-}
-
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+
+  & .col-4 {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100% / 12 * 4);
+    gap: 1rem;
+
+    & .card {
+      max-width: 100%;
+      background-color: rgb(213, 147, 24);
+
+      & .cont-img {
+        & img {
+          max-width: 100%;
+        }
+      }
+
+      &>h1 {
+        font-size: 3.2em;
+        line-height: 1.1;
+      }
+
+      &>span {
+        color: #242424;
+        font-size: large;
+      }
+    }
+  }
 }
