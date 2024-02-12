@@ -7,35 +7,36 @@ export default {
     return {
       url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
       characters: [],
-      types: [],
+      types: [], //array di tutti archetype, senza essere ripetute
+      selected: '', // per prendere il value della select deve sempre essere una stringa
     }
   },
   mounted() {
-    console.log((this.url_api));
-
-    axios
-      .get(this.url_api)
-      .then((response) => {
-        console.log(response.data);
-        console.log(response.data.data);
-        console.log(response.data.data[0].name);
-        this.characters = response.data.data
-
-        const typeOfMap = this.characters.map(character => character.archetype);
-        this.types = [...new Set(typeOfMap)];
-        console.log(this.types);
-
-      })
+    this.getCards();
   },
 
-  computed: {
-    filterArchetype(arrayDati, type) {
-      const typeId = document.getElementById('archetypeId');
-      const typeSelect = typeId.value;
-      if (!type) return this.arrayDati;
-      return this.arrayDati.filter((dato) => dato.archetype.includes(typeSelect))
-    },
+  methods: {
+    getCards() {
+      axios
+        .get(this.url_api)
+        .then((response) => {
+          /*
+          console.log(response.data);
+          console.log(response.data.data);
+          console.log(response.data.data[0].name);*/
+          this.characters = response.data.data
+          console.log(this.characters);
+          const typeOfMap = this.characters.map(character => character.archetype);
+          this.types = [...new Set(typeOfMap)];
+          console.log(this.types);
 
+          if (this.selected) {
+            this.characters = this.characters.filter((character) => {
+              return character.archetype && character.archetype.includes(this.selected)
+            });
+          }
+        })
+    }
   }
 }
 </script>
@@ -45,9 +46,9 @@ export default {
     <div class="container">
       <div class="filters">
         <!--<input type="" placeholder="Type a name to search">-->
-        <select name="archetypeId" id="archetypeId" placeholder="Archetype" v-model="types">
+        <select name="archetypeId" id="archetypeId" placeholder="Archetype" v-model="selected" @change="getCards">
           <option value="" selected>All</option>
-          <option v-for="type in types" :value="types"> {{ type }}</option>
+          <option v-for="(type, index) in types" :value="type" :key="index"> {{ type }} </option>
         </select>
 
       </div>
