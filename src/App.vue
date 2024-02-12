@@ -28,21 +28,15 @@ export default {
       })
   },
 
-
-  methods:
-  {
+  computed: {
     filterArchetype(arrayDati, type) {
-      if (!type) return this.arrayDati;
-      return this.arrayDati.filter((dato) => dato.archetype.includes(type))
-    },
-  },
-  /*
-    created() {
       const typeId = document.getElementById('archetypeId');
-      const type = typeId.value;
-      this.filterArchetype(this.characters, type)
-    }*/
+      const typeSelect = typeId.value;
+      if (!type) return this.arrayDati;
+      return this.arrayDati.filter((dato) => dato.archetype.includes(typeSelect))
+    },
 
+  }
 }
 </script>
 
@@ -51,12 +45,13 @@ export default {
     <div class="container">
       <div class="filters">
         <!--<input type="" placeholder="Type a name to search">-->
-        <select name="archetypeId" id="archetypeId" placeholder="Archetype">
+        <select name="archetypeId" id="archetypeId" placeholder="Archetype" v-model="types">
           <option value="" selected>All</option>
-          <option :value="types" v-for="type in types"> {{ type }}</option>
+          <option v-for="type in types" :value="types"> {{ type }}</option>
         </select>
 
       </div>
+
       <div class="row">
         <div class="col-3">
           <div class="card" v-for="character in characters">
