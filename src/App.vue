@@ -7,6 +7,7 @@ export default {
     return {
       url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
       characters: [],
+      types: [],
     }
   },
   mounted() {
@@ -20,8 +21,28 @@ export default {
         console.log(response.data.data[0].name);
         this.characters = response.data.data
 
+        const typeOfMap = this.characters.map(character => character.archetype);
+        this.types = [...new Set(typeOfMap)];
+        console.log(this.types);
+
       })
-  }
+  },
+
+
+  methods:
+  {
+    filterArchetype(arrayDati, type) {
+      if (!type) return this.arrayDati;
+      return this.arrayDati.filter((dato) => dato.archetype.includes(type))
+    },
+  },
+  /*
+    created() {
+      const typeId = document.getElementById('archetypeId');
+      const type = typeId.value;
+      this.filterArchetype(this.characters, type)
+    }*/
+
 }
 </script>
 
@@ -30,21 +51,15 @@ export default {
     <div class="container">
       <div class="filters">
         <!--<input type="" placeholder="Type a name to search">-->
-        <select name="archetipo" id="archetipo">
-          <option value="all" selected>All</option>
-          <option value="alien">alien</option>
-          <option value="Infernoble Arms">Infernoble Arms</option>
-          <option value="Noble Knight
-">Noble Knight</option>
+        <select name="archetypeId" id="archetypeId" placeholder="Archetype">
+          <option value="" selected>All</option>
+          <option :value="types" v-for="type in types"> {{ type }}</option>
         </select>
+
       </div>
       <div class="row">
         <div class="col-3">
           <div class="card" v-for="character in characters">
-            <!-- COSI HO FATTO PRIMA MA NON ERA GIUSTO
-            <div v-for="items in character.card_images" class="cont-img">
-              <img :src='items.image_url' alt="#">
-            </div>-->
             <div class="cont-img">
               <img :src='character.card_images[0].image_url' alt="#">
             </div>
