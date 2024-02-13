@@ -1,4 +1,7 @@
-:root {}
+:root {
+  --primary-orange: #d59318;
+  --white-white: white;
+}
 
 * {
   margin: 0;
@@ -10,44 +13,23 @@
   max-width: 1176px;
 }
 
+#app {
+  background-color: var(--primary-orange);
+  font-family: Arial;
+}
+
 [class^="col-"] {
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .container {
   max-width: 1176px;
   width: 80%;
   margin: auto;
+  background-color: var(--white-white);
+  padding: 1.25rem;
 }
 
-.row {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-
-  & .col-3 {
-    width: calc(100% / 12 * 3);
-
-    & .card {
-      max-width: 100%;
-      background-color: rgb(213, 147, 24);
-
-      & .cont-img {
-        & img {
-          max-width: 100%;
-        }
-      }
-
-      &>h1 {
-        font-size: 3.2em;
-        line-height: 1.1;
-      }
-
-      &>span {
-        color: #242424;
-        font-size: large;
-      }
-    }
-  }
+.col-3 {
+  width: calc(100% / 12 * 3);
 }
