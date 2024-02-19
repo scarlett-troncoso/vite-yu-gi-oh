@@ -1,7 +1,7 @@
 <script>
 import axios from 'axios';
 import AppSelect from './AppSelect.vue';
-
+//import { state } from './state.js';
 export default {
     name: 'AppMain.vue',
 
@@ -12,36 +12,77 @@ export default {
     data() {
         return {
             url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
+            // ↑↑↑ prima abbiamo lavorato con questo urls finche non abbiamo cambiato al altro creato in filterResults
             characters: [],
             types: [], //array di tutti archetype, senza essere ripetute
             selected: '', // per prendere il value della select deve sempre essere una stringa
+            //state,
         }
     },
 
-    mounted() {
-        this.getCards();
-    },
 
     methods: {
-        getCards() {
+        filterResults() {
+            const urlFilter = `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0&archetype=${this.selected}`
+
+            console.log(urlFilter);
             axios
-                .get(this.url_api)
-                .then((response) => {
+                .get(urlFilter)
+                .then(response => {
                     /*
                     console.log(response.data);
                     console.log(response.data.data);
                     console.log(response.data.data[0].name);*/
                     this.characters = response.data.data;
-                    const typeOfMap = this.characters.map(character => character.archetype);
-                    this.types = [...new Set(typeOfMap)];
-                    console.log(this.types);
-                    if (this.selected) {
-                        this.characters = this.characters.filter((character) => {
-                            return character.archetype && character.archetype.includes(this.selected);
-                        });
-                    }
-                });
-        }
+                    /* PRIMA ERA COSI, NON GIUSTO ↓↓↓
+                                        const typeOfMap = this.characters.map(character => character.archetype);
+                                        this.types = [...new Set(typeOfMap)];
+                                        console.log(this.types);
+                                        if (this.selected) {
+                                            this.characters = this.characters.filter((character) => {
+                                                return character.archetype && character.archetype.includes(this.selected);
+                                            });
+                                        }*/
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        },
+    },
+
+    mounted() {
+
+        axios
+            .get('https://db.ygoprodeck.com/api/v7/archetypes.php')
+            .then(response => {
+                console.log(response.data);
+                this.types = response.data
+            })
+            .catch(error => {
+                console.error(error);
+            })
+
+        axios
+            .get(this.url_api)
+            .then(response => {
+                /*
+                console.log(response.data);
+                console.log(response.data.data);
+                console.log(response.data.data[0].name);*/
+                this.characters = response.data.data;
+                /* PRIMA ERA COSI, NON GIUSTO ↓↓↓
+                                    const typeOfMap = this.characters.map(character => character.archetype);
+                                    this.types = [...new Set(typeOfMap)];
+                                    console.log(this.types);
+                                    if (this.selected) {
+                                        this.characters = this.characters.filter((character) => {
+                                            return character.archetype && character.archetype.includes(this.selected);
+                                        });
+                                    }*/
+            })
+            .catch(error => {
+                console.error(error);
+            })
     },
 
     computed: {
@@ -55,7 +96,7 @@ export default {
 <template>
     <main>
         <div class="filters">
-            <select id="archetypeId" placeholder="Archetype" v-model="selected" @change="getCards">
+            <select id="archetypeId" placeholder="Archetype" v-model="selected" @change="filterResults">
                 <!--Come si fa usare v-model con i props???-->
                 <AppSelect :types="types"></AppSelect>
             </select>
@@ -75,7 +116,6 @@ export default {
                             <h3>{{ character.name }}</h3>
                             <span>{{ character.archetype }}</span>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -106,9 +146,10 @@ export default {
 }
 
 .row {
+    /*
     margin: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap;*/
 
     & .card {
         background-color: var(--primary-orange);

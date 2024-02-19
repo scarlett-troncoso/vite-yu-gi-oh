@@ -10,7 +10,8 @@ export default {
 
 <template>
     <option value="" selected>All</option>
-    <option v-for="(  type, index  ) in   types  " :value="type" :key="index"> {{ type }} </option>
+    <option v-for="(  type, index  ) in   types  " :value="type.archetype_name" :key="index"> {{ type.archetype_name }}
+    </option>
 </template>
 
 
