@@ -15,8 +15,8 @@ export default {
             //url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
             // ↑↑↑ prima abbiamo lavorato con questo urls finche non abbiamo cambiato al altro creato in filterResults
             // characters: [], spostato in state.js
-            types: [], //array di tutti archetype, senza essere ripetute
-            selected: '', // per prendere il value della select deve sempre essere una stringa
+            // types: [], //array di tutti archetype, senza essere ripetute //spostato in state.js
+            // selected: '', // per prendere il value della select deve sempre essere una stringa //spostato in state.js
 
         }
     },
@@ -24,9 +24,14 @@ export default {
 
     methods: {
         filterResults() {
-            const urlFilter = `${state.url_api}&archetype=${this.selected}`
-
+            let urlFilter;
             console.log(urlFilter);
+
+            if (state.selected === '') {
+                urlFilter = state.url_api;
+            } else {
+                urlFilter = `${state.url_api}&archetype=${state.selected}`
+            }
 
             state.searchCharacters(urlFilter)
 
@@ -52,23 +57,23 @@ export default {
             ///  console.error(error);
             ///  })
         },
-
-        searchArchetypes(url) {
-            axios
-                .get(url)
-                .then(response => {
-                    console.log(response.data);
-                    this.types = response.data
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        },
+        /* SPOSTATO IN STATE.JS
+                searchArchetypes(url) {
+                    axios
+                        .get(url)
+                        .then(response => {
+                            console.log(response.data);
+                            this.types = response.data
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                },*/
     },
 
     mounted() {
         /* Get all archetypes */
-        this.searchArchetypes('https://db.ygoprodeck.com/api/v7/archetypes.php');
+        // this.searchArchetypes('https://db.ygoprodeck.com/api/v7/archetypes.php'); //spostato in created di altro componente AppSelect
 
         /* Get all cards */
         state.searchCharacters(state.url_api);
@@ -87,10 +92,7 @@ export default {
 <template>
     <main>
         <div class="filters">
-            <select id="archetypeId" placeholder="Archetype" v-model="selected" @change="filterResults">
-                <!--Come si fa usare v-model con i props???-->
-                <AppSelect :types="types"></AppSelect>
-            </select>
+            <AppSelect @filter="filterResults"></AppSelect>
         </div>
 
         <div class="container">

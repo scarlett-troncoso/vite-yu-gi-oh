@@ -6,6 +6,9 @@ export const state = reactive({
     url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0',
     characters: [],
 
+    types: [], //array di tutti archetype, senza essere ripetute
+    selected: '', // per prendere il value della select deve sempre essere una stringa
+
     searchCharacters(url) { //portato da Main
         axios
             .get(url) //this.url_api //prima di spostarlo in methods era cosi
@@ -24,6 +27,18 @@ export const state = reactive({
                                             return character.archetype && character.archetype.includes(this.selected);
                                         });
                                     }*/
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    },
+
+    searchArchetypes(url) {
+        axios
+            .get(url)
+            .then(response => {
+                console.log(response.data);
+                this.types = response.data
             })
             .catch(error => {
                 console.error(error);
