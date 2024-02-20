@@ -8,6 +8,7 @@ export const state = reactive({
 
     types: [], //array di tutti archetype, senza essere ripetute
     selected: '', // per prendere il value della select deve sempre essere una stringa
+    loading: true,
 
     searchCharacters(url) { //portato da Main
         axios
@@ -27,6 +28,7 @@ export const state = reactive({
                                             return character.archetype && character.archetype.includes(this.selected);
                                         });
                                     }*/
+                this.loading = false;
             })
             .catch(error => {
                 console.error(error);

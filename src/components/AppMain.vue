@@ -1,7 +1,8 @@
 <script>
-import axios from 'axios';
+// import axios from 'axios'; //prima cera axios ma con i refactoring non cera piu bisogno di averlo qui
 import AppSelect from './AppSelect.vue';
 import AppCards from './AppCards.vue';
+import FoundCards from './FoundCards.vue';
 import { state } from '../state.js';
 export default {
     name: 'AppMain.vue',
@@ -9,6 +10,7 @@ export default {
     components: {
         AppSelect,
         AppCards,
+        FoundCards
     },
 
     data() {
@@ -79,27 +81,20 @@ export default {
 
         /* Get all cards */
         state.searchCharacters(state.url_api);
+
+        setTimeout(() => { // solo per provare il loader
+            state.searchCharacters(state.url_api);
+        }, 20000)
     },
-
-    computed: {
-        foundCards() {
-            return state.characters ? 'Found: ' + state.characters.length + ' cards' : 'No found cards'
-        }
-    }
-
 }
 
 </script>
 
 <template>
     <main>
-        <div class="filters">
-            <AppSelect @filter="filterResults"></AppSelect>
-        </div>
+        <AppSelect @filter="filterResults"></AppSelect>
 
-        <div class="found-cards container">
-            <h3>{{ foundCards }} </h3> <!--potrebbe essere anche solo {{ state.characters.length }} -->
-        </div>
+        <FoundCards></FoundCards>
 
         <AppCards :characters="state.characters"></AppCards>
 
@@ -108,23 +103,4 @@ export default {
 
 
 
-<style scoped>
-.filters {
-    width: 80%;
-    margin: auto;
-    padding: 1.75rem 1.25rem;
-
-    &>select {
-        padding: 0.5rem;
-        border-radius: 5px;
-        border-color: #8b8a8a;
-    }
-}
-
-.found-cards {
-    background-color: #242424;
-    color: var(--white-white);
-    padding: 0.50rem;
-    margin: auto;
-}
-</style>
+<style scoped></style>

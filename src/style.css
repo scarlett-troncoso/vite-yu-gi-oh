@@ -11,6 +11,8 @@
 
 .body {
   max-width: 1176px;
+  min-height: 100vh;
+  background-color: orange;
 }
 
 #app {
