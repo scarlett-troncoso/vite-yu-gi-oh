@@ -1,0 +1,151 @@
+[1mdiff --git a/src/components/AppMain.vue b/src/components/AppMain.vue[m
+[1mindex abb501e..e42b5fc 100644[m
+[1m--- a/src/components/AppMain.vue[m
+[1m+++ b/src/components/AppMain.vue[m
+[36m@@ -1,7 +1,7 @@[m
+ <script>[m
+ import axios from 'axios';[m
+ import AppSelect from './AppSelect.vue';[m
+[31m-//import { state } from './state.js';[m
+[32m+[m[32mimport { state } from '../state.js';[m
+ export default {[m
+     name: 'AppMain.vue',[m
+ [m
+[36m@@ -11,86 +11,77 @@[m [mexport default {[m
+ [m
+     data() {[m
+         return {[m
+[31m-            url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',[m
+[32m+[m[32m            state,[m
+[32m+[m[32m            //url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',[m
+             // ↑↑↑ prima abbiamo lavorato con questo urls finche non abbiamo cambiato al altro creato in filterResults[m
+[31m-            characters: [],[m
+[32m+[m[32m            // characters: [], spostato in state.js[m
+             types: [], //array di tutti archetype, senza essere ripetute[m
+             selected: '', // per prendere il value della select deve sempre essere una stringa[m
+[31m-            //state,[m
+[32m+[m
+         }[m
+     },[m
+ [m
+ [m
+     methods: {[m
+         filterResults() {[m
+[31m-            const urlFilter = `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0&archetype=${this.selected}`[m
+[32m+[m[32m            const urlFilter = `${state.url_api}&archetype=${this.selected}`[m
+ [m
+             console.log(urlFilter);[m
+[32m+[m
+[32m+[m[32m            state.searchCharacters(urlFilter)[m
+[32m+[m
+[32m+[m[32m            /// axios[m
+[32m+[m[32m            ///   .get(urlFilter)[m
+[32m+[m[32m            ///   .then(response => {[m
+[32m+[m[32m            /*[m
+[32m+[m[32m            console.log(response.data);[m
+[32m+[m[32m            console.log(response.data.data);[m
+[32m+[m[32m            console.log(response.data.data[0].name);*/[m
+[32m+[m[32m            ///      this.characters = response.data.data;[m
+[32m+[m[32m            /* PRIMA ERA COSI, NON GIUSTO ↓↓↓[m
+[32m+[m[32m                                const typeOfMap = this.characters.map(character => character.archetype);[m
+[32m+[m[32m                                this.types = [...new Set(typeOfMap)];[m
+[32m+[m[32m                                console.log(this.types);[m
+[32m+[m[32m                                if (this.selected) {[m
+[32m+[m[32m                                    this.characters = this.characters.filter((character) => {[m
+[32m+[m[32m                                        return character.archetype && character.archetype.includes(this.selected);[m
+[32m+[m[32m                                    });[m
+[32m+[m[32m                                }*/[m
+[32m+[m[32m            ///  })[m
+[32m+[m[32m            /// .catch(error => {[m
+[32m+[m[32m            ///  console.error(error);[m
+[32m+[m[32m            ///  })[m
+[32m+[m[32m        },[m
+[32m+[m
+[32m+[m[32m        searchArchetypes(url) {[m
+             axios[m
+[31m-                .get(urlFilter)[m
+[32m+[m[32m                .get(url)[m
+                 .then(response => {[m
+[31m-                    /*[m
+                     console.log(response.data);[m
+[31m-                    console.log(response.data.data);[m
+[31m-                    console.log(response.data.data[0].name);*/[m
+[31m-                    this.characters = response.data.data;[m
+[31m-                    /* PRIMA ERA COSI, NON GIUSTO ↓↓↓[m
+[31m-                                        const typeOfMap = this.characters.map(character => character.archetype);[m
+[31m-                                        this.types = [...new Set(typeOfMap)];[m
+[31m-                                        console.log(this.types);[m
+[31m-                                        if (this.selected) {[m
+[31m-                                            this.characters = this.characters.filter((character) => {[m
+[31m-                                                return character.archetype && character.archetype.includes(this.selected);[m
+[31m-                                            });[m
+[31m-                                        }*/[m
+[32m+[m[32m                    this.types = response.data[m
+                 })[m
+                 .catch(error => {[m
+                     console.error(error);[m
+[31m-                })[m
+[32m+[m[32m                });[m
+         },[m
+     },[m
+ [m
+     mounted() {[m
+[32m+[m[32m        /* Get all archetypes */[m
+[32m+[m[32m        this.searchArchetypes('https://db.ygoprodeck.com/api/v7/archetypes.php');[m
+ [m
+[31m-        axios[m
+[31m-            .get('https://db.ygoprodeck.com/api/v7/archetypes.php')[m
+[31m-            .then(response => {[m
+[31m-                console.log(response.data);[m
+[31m-                this.types = response.data[m
+[31m-            })[m
+[31m-            .catch(error => {[m
+[31m-                console.error(error);[m
+[31m-            })[m
+[31m-[m
+[31m-        axios[m
+[31m-            .get(this.url_api)[m
+[31m-            .then(response => {[m
+[31m-                /*[m
+[31m-                console.log(response.data);[m
+[31m-                console.log(response.data.data);[m
+[31m-                console.log(response.data.data[0].name);*/[m
+[31m-                this.characters = response.data.data;[m
+[31m-                /* PRIMA ERA COSI, NON GIUSTO ↓↓↓[m
+[31m-                                    const typeOfMap = this.characters.map(character => character.archetype);[m
+[31m-                                    this.types = [...new Set(typeOfMap)];[m
+[31m-                                    console.log(this.types);[m
+[31m-                                    if (this.selected) {[m
+[31m-                                        this.characters = this.characters.filter((character) => {[m
+[31m-                                            return character.archetype && character.archetype.includes(this.selected);[m
+[31m-                                        });[m
+[31m-                                    }*/[m
+[31m-            })[m
+[31m-            .catch(error => {[m
+[31m-                console.error(error);[m
+[31m-            })[m
+[32m+[m[32m        /* Get all cards */[m
+[32m+[m[32m        state.searchCharacters(state.url_api);[m
+     },[m
+ [m
+     computed: {[m
+         foundCards() {[m
+[31m-            return this.characters ? 'Found: ' + this.characters.length + ' cards' : 'No found cards'[m
+[32m+[m[32m            return state.characters ? 'Found: ' + state.characters.length + ' cards' : 'No found cards'[m
+         }[m
+     }[m
+[32m+[m
+ }[m
+[32m+[m
+ </script>[m
+ [m
+ <template>[m
+[36m@@ -107,7 +98,7 @@[m [mexport default {[m
+                 <h3>{{ foundCards }} </h3>[m
+             </div>[m
+             <div class="row">[m
+[31m-                <div class="col-3" v-for="character in characters">[m
+[32m+[m[32m                <div class="col-3" v-for="character in state.characters">[m
+                     <div class="card">[m
+                         <div class="cont-img">[m
+                             <img :src='character.card_images[0].image_url' alt="#">[m

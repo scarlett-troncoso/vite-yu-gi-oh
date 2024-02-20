@@ -1,7 +1,7 @@
 <script>
 import axios from 'axios';
 import AppSelect from './AppSelect.vue';
-//import { state } from './state.js';
+import { state } from '../state.js';
 export default {
     name: 'AppMain.vue',
 
@@ -11,86 +11,77 @@ export default {
 
     data() {
         return {
-            url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
+            state,
+            //url_api: 'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0', //https://db.ygoprodeck.com/api/v7/cardinfo.php?num=39&offset=0&archetype=Alien',
             // ↑↑↑ prima abbiamo lavorato con questo urls finche non abbiamo cambiato al altro creato in filterResults
-            characters: [],
+            // characters: [], spostato in state.js
             types: [], //array di tutti archetype, senza essere ripetute
             selected: '', // per prendere il value della select deve sempre essere una stringa
-            //state,
+
         }
     },
 
 
     methods: {
         filterResults() {
-            const urlFilter = `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=40&offset=0&archetype=${this.selected}`
+            const urlFilter = `${state.url_api}&archetype=${this.selected}`
 
             console.log(urlFilter);
+
+            state.searchCharacters(urlFilter)
+
+            /// axios
+            ///   .get(urlFilter)
+            ///   .then(response => {
+            /*
+            console.log(response.data);
+            console.log(response.data.data);
+            console.log(response.data.data[0].name);*/
+            ///      this.characters = response.data.data;
+            /* PRIMA ERA COSI, NON GIUSTO ↓↓↓
+                                const typeOfMap = this.characters.map(character => character.archetype);
+                                this.types = [...new Set(typeOfMap)];
+                                console.log(this.types);
+                                if (this.selected) {
+                                    this.characters = this.characters.filter((character) => {
+                                        return character.archetype && character.archetype.includes(this.selected);
+                                    });
+                                }*/
+            ///  })
+            /// .catch(error => {
+            ///  console.error(error);
+            ///  })
+        },
+
+        searchArchetypes(url) {
             axios
-                .get(urlFilter)
+                .get(url)
                 .then(response => {
-                    /*
                     console.log(response.data);
-                    console.log(response.data.data);
-                    console.log(response.data.data[0].name);*/
-                    this.characters = response.data.data;
-                    /* PRIMA ERA COSI, NON GIUSTO ↓↓↓
-                                        const typeOfMap = this.characters.map(character => character.archetype);
-                                        this.types = [...new Set(typeOfMap)];
-                                        console.log(this.types);
-                                        if (this.selected) {
-                                            this.characters = this.characters.filter((character) => {
-                                                return character.archetype && character.archetype.includes(this.selected);
-                                            });
-                                        }*/
+                    this.types = response.data
                 })
                 .catch(error => {
                     console.error(error);
-                })
+                });
         },
     },
 
     mounted() {
+        /* Get all archetypes */
+        this.searchArchetypes('https://db.ygoprodeck.com/api/v7/archetypes.php');
 
-        axios
-            .get('https://db.ygoprodeck.com/api/v7/archetypes.php')
-            .then(response => {
-                console.log(response.data);
-                this.types = response.data
-            })
-            .catch(error => {
-                console.error(error);
-            })
-
-        axios
-            .get(this.url_api)
-            .then(response => {
-                /*
-                console.log(response.data);
-                console.log(response.data.data);
-                console.log(response.data.data[0].name);*/
-                this.characters = response.data.data;
-                /* PRIMA ERA COSI, NON GIUSTO ↓↓↓
-                                    const typeOfMap = this.characters.map(character => character.archetype);
-                                    this.types = [...new Set(typeOfMap)];
-                                    console.log(this.types);
-                                    if (this.selected) {
-                                        this.characters = this.characters.filter((character) => {
-                                            return character.archetype && character.archetype.includes(this.selected);
-                                        });
-                                    }*/
-            })
-            .catch(error => {
-                console.error(error);
-            })
+        /* Get all cards */
+        state.searchCharacters(state.url_api);
     },
 
     computed: {
         foundCards() {
-            return this.characters ? 'Found: ' + this.characters.length + ' cards' : 'No found cards'
+            return state.characters ? 'Found: ' + state.characters.length + ' cards' : 'No found cards'
         }
     }
+
 }
+
 </script>
 
 <template>
@@ -107,7 +98,7 @@ export default {
                 <h3>{{ foundCards }} </h3>
             </div>
             <div class="row">
-                <div class="col-3" v-for="character in characters">
+                <div class="col-3" v-for="character in state.characters">
                     <div class="card">
                         <div class="cont-img">
                             <img :src='character.card_images[0].image_url' alt="#">
